@@ -9,14 +9,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <meta name="theme-color" content="#D61F1F">
+  <meta name="theme-color" content="#FFC72C">
 </head>
 <body>
   <header class="site-header">
     <h1>令和の虎 年代MAP<span class="beta">学年版</span></h1>
     <div class="actions">
       <button id="yearBtn" aria-haspopup="dialog" aria-controls="yearDialog">年を選ぶ</button>
-      <button id="sortBtn" aria-label="ソート切替">降順</button>
+      <button id="sortBtn" aria-label="ソート切替">昇順</button>
       <button id="themeBtn" aria-label="配色切替">配色</button>
     </div>
   </header>
@@ -51,9 +51,7 @@
       <div class="dialog__search">
         <input id="yearSearch" type="search" placeholder="59〜99, 00 を検索">
       </div>
-      <div id="yearList" class="dialog__list" role="listbox" aria-label="年一覧">
-        <!-- filled by JS -->
-      </div>
+      <div id="yearList" class="dialog__list" role="listbox" aria-label="年一覧"></div>
       <footer class="dialog__footer">
         <button value="close">閉じる</button>
       </footer>
