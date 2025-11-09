@@ -17,11 +17,12 @@
   const $yearSearch = document.getElementById('yearSearch');
   const $yearList = document.getElementById('yearList');
 
-  let desc = true;
+  // 初期は昇順
+  let desc = false;
 
-  // Theme
+  // 初期テーマはライト
   const restoreTheme = () => {
-    const t = localStorage.getItem('theme') || 'dark';
+    const t = localStorage.getItem('theme') || 'light';
     if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
     else document.documentElement.removeAttribute('data-theme');
   };
@@ -37,7 +38,6 @@
     }
   });
 
-  // Render helpers
   const makeOrder = () => {
     const base = years.slice();
     base.sort((a,b) => {
@@ -115,16 +115,17 @@
     });
   };
 
-  // Initial render
+  // 初期描画
+  $sort.textContent = '昇順';
   renderList(makeOrder());
   renderYearDialog(makeOrder());
 
-  // Search in list
+  // 検索
   $search.addEventListener('input', (e) => {
     renderList(makeOrder(), e.target.value);
   });
 
-  // Sort
+  // ソート切替
   $sort.addEventListener('click', () => {
     desc = !desc;
     $sort.textContent = desc ? '降順' : '昇順';
@@ -132,7 +133,7 @@
     renderYearDialog(makeOrder(), $yearSearch.value);
   });
 
-  // Dialog open
+  // モーダル起動
   $yearBtn.addEventListener('click', () => {
     renderYearDialog(makeOrder(), '');
     $yearSearch.value = '';
@@ -140,12 +141,12 @@
     else $dlg.setAttribute('open','open');
   });
 
-  // Dialog search
+  // モーダル内検索（数字だけ許可）
   $yearSearch.addEventListener('input', (e) => {
     renderYearDialog(makeOrder(), e.target.value.replace(/[^0-9]/g,''));
   });
 
-  // Select year
+  // 年選択 → スクロール
   $yearList.addEventListener('click', (e) => {
     const item = e.target.closest('.year-item');
     if (!item) return;
