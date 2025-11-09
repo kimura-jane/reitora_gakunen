@@ -1,0 +1,211 @@
+/* 黄×赤 高コントラスト。行表示＋モーダル年選択 */
+:root {
+  --bg: #0b0803;
+  --panel: #1a1205;
+  --ink: #fff7df;
+  --muted: #e2cf9d;
+  --accent: #D61F1F; /* 赤 */
+  --gold: #F6CC4F;  /* 黄 */
+  --chip: #241a07;
+  --chip-ink: #ffe8a2;
+  --ring: #3b2707;
+  --ring-strong: #6b4207;
+  --shadow: rgba(0,0,0,.35);
+  --zebra: #161005;
+}
+
+[data-theme="light"] {
+  --bg: #fffaec;
+  --panel: #fff6d6;
+  --ink: #3a2a00;
+  --muted: #6b5a2a;
+  --accent: #C81E1E;
+  --gold: #F8D25E;
+  --chip: #fff0b3;
+  --chip-ink: #3a2a00;
+  --ring: #ecd99d;
+  --ring-strong: #d9bf66;
+  --shadow: rgba(0,0,0,.10);
+  --zebra: #fff0c9;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: "Noto Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  background:
+    radial-gradient(1100px 700px at 90% -10%, color-mix(in oklab, var(--accent) 20%, transparent), transparent 60%),
+    radial-gradient(900px 600px at 10% 0%, color-mix(in oklab, var(--gold) 16%, transparent), transparent 55%),
+    var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.site-header {
+  position: sticky; top: 0; z-index: 20;
+  backdrop-filter: saturate(140%) blur(6px);
+  background: color-mix(in oklab, var(--bg) 82%, transparent);
+  border-bottom: 1px solid var(--ring);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  box-shadow: 0 6px 18px var(--shadow);
+}
+.site-header h1 { font-size: 20px; margin: 0; display: flex; gap: 10px; align-items: center; }
+.site-header .beta {
+  font-size: 12px;
+  padding: 2px 8px;
+  border: 1px solid var(--ring);
+  border-radius: 999px;
+  color: var(--ink);
+  background: linear-gradient(90deg, color-mix(in oklab, var(--gold), transparent 30%), color-mix(in oklab, var(--accent), transparent 70%));
+}
+
+.actions { display: grid; grid-auto-flow: column; gap: 8px; }
+button {
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel), transparent 8%), var(--panel));
+  color: var(--ink);
+  border: 1px solid var(--ring);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+button:hover { border-color: var(--accent); }
+
+.notes, .controls, .list, .site-footer { width: min(1200px, 94vw); margin: 16px auto; }
+.notes ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+.controls {
+  display: grid; grid-template-columns: 1fr auto; gap: 10px;
+}
+.controls input[type="search"] {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--ring);
+  background: var(--panel);
+  color: var(--ink);
+  outline: none;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gold), transparent 70%);
+}
+.muted { color: var(--muted); font-size: 14px; align-self: center; }
+
+/* 一覧：一年＝一行 */
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel), transparent 8%), var(--panel));
+  border: 1px solid var(--ring);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px var(--shadow);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 92px 1fr 64px;
+  align-items: center;
+  column-gap: 12px;
+  min-height: 52px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ring);
+  background: var(--bg);
+}
+.row:nth-child(even) { background: var(--zebra); }
+.row:last-child { border-bottom: 0; }
+
+.row__year {
+  font-weight: 700;
+  letter-spacing: .02em;
+  background: linear-gradient(90deg, var(--gold), color-mix(in oklab, var(--gold), var(--accent) 30%));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+.row__chips {
+  display: inline-flex;
+  gap: 6px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+.row__chips::-webkit-scrollbar { height: 8px; }
+.row__chips::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--gold), transparent 60%); border-radius: 8px; }
+
+.row__count {
+  justify-self: end;
+  font-size: 12px;
+  color: var(--muted);
+}
+.chip {
+  font-size: 13px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--gold), transparent 65%), var(--chip));
+  color: var(--chip-ink);
+  border: 1px solid var(--ring);
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.highlight { outline: 2px solid var(--accent); border-radius: 8px; animation: hi 1.2s ease-out 1; }
+@keyframes hi { from { outline-color: transparent; } to { outline-color: var(--accent); } }
+
+/* モーダル */
+.dialog {
+  border: none; padding: 0;
+  width: min(580px, 92vw);
+  background: transparent;
+}
+.dialog::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(2px); }
+.dialog__frame {
+  background: var(--panel);
+  border: 1px solid var(--ring-strong);
+  border-radius: 14px;
+  display: grid; gap: 0;
+  overflow: hidden;
+  box-shadow: 0 20px 60px var(--shadow);
+}
+.dialog__header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 14px;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--gold), transparent 40%), color-mix(in oklab, var(--accent), transparent 85%));
+  border-bottom: 1px solid var(--ring-strong);
+}
+.dialog__close {
+  border: 1px solid var(--ring-strong);
+  background: var(--panel);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.dialog__search { padding: 10px 14px; border-bottom: 1px solid var(--ring); }
+.dialog__search input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--ring);
+  border-radius: 10px;
+  background: var(--bg); color: var(--ink);
+}
+.dialog__list {
+  max-height: min(60vh, 520px);
+  overflow: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.year-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ring);
+  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.year-item:hover { background: color-mix(in oklab, var(--gold), transparent 75%); }
+.year-item__label {
+  font-weight: 700;
+}
+.year-item__count {
+  font-size: 12px; color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .row { grid-template-columns: 70px 1fr 56px; }
+}
+.site-footer { margin: 40px auto 80px; color: var(--muted); text-align: center; }
