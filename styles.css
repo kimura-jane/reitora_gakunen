@@ -1,32 +1,34 @@
-/* 黄×赤 高コントラスト。行表示＋モーダル年選択 */
+/* 明るい黄×赤。初期はライトテーマ */
 :root {
-  --bg: #0b0803;
-  --panel: #1a1205;
+  /* ダーク（切替時） */
+  --bg: #111009;
+  --panel: #17140c;
   --ink: #fff7df;
   --muted: #e2cf9d;
-  --accent: #D61F1F; /* 赤 */
-  --gold: #F6CC4F;  /* 黄 */
-  --chip: #241a07;
-  --chip-ink: #ffe8a2;
-  --ring: #3b2707;
+  --accent: #E01B2D;   /* 赤 */
+  --gold:   #FFCD3C;   /* 黄 */
+  --chip: #1f190a;
+  --chip-ink: #ffe5a0;
+  --ring: #3f2f0d;
   --ring-strong: #6b4207;
   --shadow: rgba(0,0,0,.35);
-  --zebra: #161005;
+  --zebra: #181308;
 }
 
 [data-theme="light"] {
-  --bg: #fffaec;
-  --panel: #fff6d6;
-  --ink: #3a2a00;
-  --muted: #6b5a2a;
-  --accent: #C81E1E;
-  --gold: #F8D25E;
-  --chip: #fff0b3;
+  /* ライト（初期） */
+  --bg: #fffdf5;
+  --panel: #ffffff;
+  --ink: #1a1a1a;
+  --muted: #6a5b2e;
+  --accent: #C81E1E;   /* 赤 */
+  --gold:   #FFC72C;   /* 黄 */
+  --chip: #FFF4CC;
   --chip-ink: #3a2a00;
-  --ring: #ecd99d;
-  --ring-strong: #d9bf66;
-  --shadow: rgba(0,0,0,.10);
-  --zebra: #fff0c9;
+  --ring: #EAD9A5;
+  --ring-strong: #D7BF6A;
+  --shadow: rgba(0,0,0,.12);
+  --zebra: #FFF8E0;
 }
 
 * { box-sizing: border-box; }
@@ -35,8 +37,8 @@ body {
   margin: 0;
   font-family: "Noto Sans JP", system-ui, -apple-system, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
   background:
-    radial-gradient(1100px 700px at 90% -10%, color-mix(in oklab, var(--accent) 20%, transparent), transparent 60%),
-    radial-gradient(900px 600px at 10% 0%, color-mix(in oklab, var(--gold) 16%, transparent), transparent 55%),
+    radial-gradient(1100px 700px at 90% -10%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 60%),
+    radial-gradient(900px 600px at 10% 0%, color-mix(in oklab, var(--gold) 20%, transparent), transparent 55%),
     var(--bg);
   color: var(--ink);
   line-height: 1.6;
@@ -45,7 +47,7 @@ body {
 .site-header {
   position: sticky; top: 0; z-index: 20;
   backdrop-filter: saturate(140%) blur(6px);
-  background: color-mix(in oklab, var(--bg) 82%, transparent);
+  background: color-mix(in oklab, var(--bg) 86%, transparent);
   border-bottom: 1px solid var(--ring);
   display: flex; align-items: center; justify-content: space-between;
   padding: 14px 18px;
@@ -58,7 +60,7 @@ body {
   border: 1px solid var(--ring);
   border-radius: 999px;
   color: var(--ink);
-  background: linear-gradient(90deg, color-mix(in oklab, var(--gold), transparent 30%), color-mix(in oklab, var(--accent), transparent 70%));
+  background: linear-gradient(90deg, color-mix(in oklab, var(--gold), transparent 20%), color-mix(in oklab, var(--accent), transparent 80%));
 }
 
 .actions { display: grid; grid-auto-flow: column; gap: 8px; }
@@ -82,12 +84,10 @@ button:hover { border-color: var(--accent); }
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid var(--ring);
-  background: var(--panel);
+  background: #fff;
   color: var(--ink);
   outline: none;
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gold), transparent 70%);
 }
-.muted { color: var(--muted); font-size: 14px; align-self: center; }
 
 /* 一覧：一年＝一行 */
 .list {
@@ -109,7 +109,7 @@ button:hover { border-color: var(--accent); }
   min-height: 52px;
   padding: 8px 12px;
   border-bottom: 1px solid var(--ring);
-  background: var(--bg);
+  background: var(--panel);
 }
 .row:nth-child(even) { background: var(--zebra); }
 .row:last-child { border-bottom: 0; }
@@ -117,7 +117,7 @@ button:hover { border-color: var(--accent); }
 .row__year {
   font-weight: 700;
   letter-spacing: .02em;
-  background: linear-gradient(90deg, var(--gold), color-mix(in oklab, var(--gold), var(--accent) 30%));
+  background: linear-gradient(90deg, var(--gold), color-mix(in oklab, var(--gold), var(--accent) 28%));
   -webkit-background-clip: text; background-clip: text;
   color: transparent;
 }
@@ -136,9 +136,10 @@ button:hover { border-color: var(--accent); }
   font-size: 12px;
   color: var(--muted);
 }
+
 .chip {
   font-size: 13px;
-  background: linear-gradient(180deg, color-mix(in oklab, var(--gold), transparent 65%), var(--chip));
+  background: linear-gradient(180deg, color-mix(in oklab, var(--gold), transparent 70%), var(--chip));
   color: var(--chip-ink);
   border: 1px solid var(--ring);
   padding: 6px 10px;
@@ -149,11 +150,7 @@ button:hover { border-color: var(--accent); }
 @keyframes hi { from { outline-color: transparent; } to { outline-color: var(--accent); } }
 
 /* モーダル */
-.dialog {
-  border: none; padding: 0;
-  width: min(580px, 92vw);
-  background: transparent;
-}
+.dialog { border: none; padding: 0; width: min(580px, 92vw); background: transparent; }
 .dialog::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(2px); }
 .dialog__frame {
   background: var(--panel);
@@ -166,7 +163,7 @@ button:hover { border-color: var(--accent); }
 .dialog__header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 12px 14px;
-  background: linear-gradient(90deg, color-mix(in oklab, var(--gold), transparent 40%), color-mix(in oklab, var(--accent), transparent 85%));
+  background: linear-gradient(90deg, color-mix(in oklab, var(--gold), transparent 15%), color-mix(in oklab, var(--accent), transparent 80%));
   border-bottom: 1px solid var(--ring-strong);
 }
 .dialog__close {
@@ -183,7 +180,7 @@ button:hover { border-color: var(--accent); }
   padding: 10px 12px;
   border: 1px solid var(--ring);
   border-radius: 10px;
-  background: var(--bg); color: var(--ink);
+  background: #fff; color: var(--ink);
 }
 .dialog__list {
   max-height: min(60vh, 520px);
@@ -192,18 +189,15 @@ button:hover { border-color: var(--accent); }
   grid-template-columns: 1fr;
 }
 .year-item {
+  background: var(--panel);
   padding: 12px 16px;
   border-bottom: 1px solid var(--ring);
   cursor: pointer;
   display: flex; justify-content: space-between; align-items: center;
 }
 .year-item:hover { background: color-mix(in oklab, var(--gold), transparent 75%); }
-.year-item__label {
-  font-weight: 700;
-}
-.year-item__count {
-  font-size: 12px; color: var(--muted);
-}
+.year-item__label { font-weight: 700; }
+.year-item__count { font-size: 12px; color: var(--muted); }
 
 @media (max-width: 560px) {
   .row { grid-template-columns: 70px 1fr 56px; }
