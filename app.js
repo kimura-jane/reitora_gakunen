@@ -48,14 +48,22 @@
     return base;
   };
 
+  // 検索中はヒットのある年代だけ描画
   const renderList = (order, q = '') => {
     const query = q.trim();
-    let total = 0;
+    let totalNames = 0;
+    let matchedYears = 0;
+
     $list.innerHTML = '';
     order.forEach(y => {
       const names = (data[y] || []);
       const filtered = query ? names.filter(n => n.includes(query)) : names;
-      total += filtered.length;
+
+      // クエリありでヒット0ならその年は表示しない
+      if (query && filtered.length === 0) return;
+
+      matchedYears += query ? 1 : 1; // 行は表示されるので+1
+      totalNames += query ? filtered.length : names.length;
 
       const row = document.createElement('section');
       row.className = 'row';
@@ -67,7 +75,9 @@
 
       const chips = document.createElement('div');
       chips.className = 'row__chips';
-      if (filtered.length) {
+
+      if (query) {
+        // 検索時はヒット名のみ表示
         filtered.forEach(n => {
           const span = document.createElement('span');
           span.className = 'chip';
@@ -75,22 +85,36 @@
           chips.appendChild(span);
         });
       } else {
-        const span = document.createElement('span');
-        span.className = 'chip';
-        span.textContent = '未登録';
-        chips.appendChild(span);
+        // 通常時は全件。0件は「未登録」
+        if (names.length) {
+          names.forEach(n => {
+            const span = document.createElement('span');
+            span.className = 'chip';
+            span.textContent = n;
+            chips.appendChild(span);
+          });
+        } else {
+          const span = document.createElement('span');
+          span.className = 'chip';
+          span.textContent = '未登録';
+          chips.appendChild(span);
+        }
       }
 
       const countEl = document.createElement('div');
       countEl.className = 'row__count';
-      countEl.textContent = filtered.length ? `${filtered.length}名` : '—';
+      const countNum = query ? filtered.length : names.length;
+      countEl.textContent = countNum ? `${countNum}名` : '—';
 
       row.append(yearEl, chips, countEl);
       $list.appendChild(row);
     });
-    $hit.textContent = query ? `ヒット: ${total}名` : '';
+
+    // ヒット表示（名/年）
+    $hit.textContent = query ? `ヒット: ${totalNames}名 / ${$list.children.length}年` : '';
   };
 
+  // 年選択モーダルは従来どおり（数字のみ検索）
   const renderYearDialog = (order, q = '') => {
     const query = q.trim();
     $yearList.innerHTML = '';
