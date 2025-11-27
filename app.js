@@ -1,9 +1,11 @@
 (() => {
   const data = window.REITORA_DATA;
+
+  // 59..99 と 00..09（01〜03含む）
   const years = (() => {
     const arr = [];
     for (let y = 59; y <= 99; y++) arr.push(String(y));
-    arr.push("00");
+    for (let y = 0; y <= 9; y++) arr.push(String(y).padStart(2, '0'));
     return arr;
   })();
 
@@ -27,6 +29,7 @@
     else document.documentElement.removeAttribute('data-theme');
   };
   restoreTheme();
+
   $theme.addEventListener('click', () => {
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
     if (isLight) {
@@ -40,30 +43,28 @@
 
   const makeOrder = () => {
     const base = years.slice();
-    base.sort((a,b) => {
-      const aa = a === '00' ? 100 : parseInt(a,10);
-      const bb = b === '00' ? 100 : parseInt(b,10);
+    base.sort((a, b) => {
+      const aa = a === '00' ? 100 : parseInt(a, 10);
+      const bb = b === '00' ? 100 : parseInt(b, 10);
       return desc ? bb - aa : aa - bb;
     });
     return base;
   };
 
-  // 検索中はヒットのある年代だけ描画
+  // 検索中はヒットのある年代だけ表示
   const renderList = (order, q = '') => {
     const query = q.trim();
     let totalNames = 0;
-    let matchedYears = 0;
-
     $list.innerHTML = '';
+
     order.forEach(y => {
       const names = (data[y] || []);
       const filtered = query ? names.filter(n => n.includes(query)) : names;
 
-      // クエリありでヒット0ならその年は表示しない
-      if (query && filtered.length === 0) return;
+      if (query && filtered.length === 0) return; // 行ごと非表示
 
-      matchedYears += query ? 1 : 1; // 行は表示されるので+1
-      totalNames += query ? filtered.length : names.length;
+      const toShow = query ? filtered : names;
+      totalNames += toShow.length;
 
       const row = document.createElement('section');
       row.className = 'row';
@@ -76,45 +77,32 @@
       const chips = document.createElement('div');
       chips.className = 'row__chips';
 
-      if (query) {
-        // 検索時はヒット名のみ表示
-        filtered.forEach(n => {
+      if (toShow.length) {
+        toShow.forEach(n => {
           const span = document.createElement('span');
           span.className = 'chip';
           span.textContent = n;
           chips.appendChild(span);
         });
       } else {
-        // 通常時は全件。0件は「未登録」
-        if (names.length) {
-          names.forEach(n => {
-            const span = document.createElement('span');
-            span.className = 'chip';
-            span.textContent = n;
-            chips.appendChild(span);
-          });
-        } else {
-          const span = document.createElement('span');
-          span.className = 'chip';
-          span.textContent = '未登録';
-          chips.appendChild(span);
-        }
+        const span = document.createElement('span');
+        span.className = 'chip';
+        span.textContent = '未登録';
+        chips.appendChild(span);
       }
 
       const countEl = document.createElement('div');
       countEl.className = 'row__count';
-      const countNum = query ? filtered.length : names.length;
-      countEl.textContent = countNum ? `${countNum}名` : '—';
+      countEl.textContent = toShow.length ? `${toShow.length}名` : '—';
 
       row.append(yearEl, chips, countEl);
       $list.appendChild(row);
     });
 
-    // ヒット表示（名/年）
     $hit.textContent = query ? `ヒット: ${totalNames}名 / ${$list.children.length}年` : '';
   };
 
-  // 年選択モーダルは従来どおり（数字のみ検索）
+  // 年選択モーダル（数字だけ検索）
   const renderYearDialog = (order, q = '') => {
     const query = q.trim();
     $yearList.innerHTML = '';
