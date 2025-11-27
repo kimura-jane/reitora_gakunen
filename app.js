@@ -1,7 +1,7 @@
 (() => {
   const data = window.REITORA_DATA;
 
-  // 59..99 と 00..09（01〜03含む）
+  // 59..99 と 00..09（01〜09も扱う）
   const years = (() => {
     const arr = [];
     for (let y = 59; y <= 99; y++) arr.push(String(y));
@@ -22,14 +22,13 @@
   // 初期は昇順
   let desc = false;
 
-  // 初期テーマはライト
+  // テーマ初期化（ライトを既定）
   const restoreTheme = () => {
     const t = localStorage.getItem('theme') || 'light';
     if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
     else document.documentElement.removeAttribute('data-theme');
   };
   restoreTheme();
-
   $theme.addEventListener('click', () => {
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
     if (isLight) {
@@ -41,11 +40,19 @@
     }
   });
 
+  // 並び順の重み付け
+  // 59..99 はそのまま、00→100、01..09→101..109 として比較（若い=大きい扱い）
+  const yearRank = (y) => {
+    if (y === '00') return 100;
+    if (/^0[1-9]$/.test(y)) return 100 + parseInt(y, 10); // 01..09
+    return parseInt(y, 10);
+  };
+
   const makeOrder = () => {
     const base = years.slice();
     base.sort((a, b) => {
-      const aa = a === '00' ? 100 : parseInt(a, 10);
-      const bb = b === '00' ? 100 : parseInt(b, 10);
+      const aa = yearRank(a);
+      const bb = yearRank(b);
       return desc ? bb - aa : aa - bb;
     });
     return base;
@@ -60,7 +67,6 @@
     order.forEach(y => {
       const names = (data[y] || []);
       const filtered = query ? names.filter(n => n.includes(query)) : names;
-
       if (query && filtered.length === 0) return; // 行ごと非表示
 
       const toShow = query ? filtered : names;
@@ -102,7 +108,7 @@
     $hit.textContent = query ? `ヒット: ${totalNames}名 / ${$list.children.length}年` : '';
   };
 
-  // 年選択モーダル（数字だけ検索）
+  // 年選択モーダル（数字のみ検索）
   const renderYearDialog = (order, q = '') => {
     const query = q.trim();
     $yearList.innerHTML = '';
